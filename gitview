@@ -162,7 +162,7 @@ class CellRendererGraph(gtk.GenericCellRenderer):
 			for item in names:
 				names_len += len(item)
 
-		width = box_size * (cols + 1 ) + names_len 
+		width = box_size * (cols + 1 ) + names_len
 		height = box_size
 
 		# FIXME I have no idea how to use cell_area properly
@@ -435,8 +435,8 @@ class GitView:
 		# Use three-quarters of the screen by default
 		screen = self.window.get_screen()
 		monitor = screen.get_monitor_geometry(0)
-		width = int(monitor.width * 0.75)
-		height = int(monitor.height * 0.75)
+		width = monitor.width
+		height = monitor.height
 		self.window.set_default_size(width, height)
 
 		# FIXME AndyFitz!
@@ -870,15 +870,15 @@ class GitView:
 
 		# Reset nodepostion
 		if (last_nodepos > 5):
-			last_nodepos = -1 
+			last_nodepos = -1
 
 		# Add the incomplete lines of the last cell in this
 		try:
 			colour = self.colours[commit.commit_sha1]
 		except KeyError:
 			self.colours[commit.commit_sha1] = last_colour+1
-			last_colour = self.colours[commit.commit_sha1] 
-			colour =   self.colours[commit.commit_sha1] 
+			last_colour = self.colours[commit.commit_sha1]
+			colour =   self.colours[commit.commit_sha1]
 
 		try:
 			node_pos = self.nodepos[commit.commit_sha1]
@@ -910,7 +910,7 @@ class GitView:
 				self.colours[parent_id] = last_colour+1
 				last_colour = self.colours[parent_id]
 				self.nodepos[parent_id] = last_nodepos+1
-				last_nodepos = self.nodepos[parent_id] 
+				last_nodepos = self.nodepos[parent_id]
 
 			in_line.append((node_pos, self.nodepos[parent_id],
 						self.colours[parent_id]))
@@ -946,7 +946,7 @@ class GitView:
 			try:
 				next_commit = self.commits[index+1]
 				if (next_commit.commit_sha1 == sha1 and pos != int(pos)):
-				# join the line back to the node point 
+				# join the line back to the node point
 				# This need to be done only if we modified it
 					in_line.append((pos, pos-0.5, self.colours[sha1]))
 					continue;
