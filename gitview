@@ -484,6 +484,7 @@ class GitView:
 		vbox.set_border_width(12)
 		vbox.show()
 
+		'''
 		menu_bar = gtk.MenuBar()
 		menu_bar.set_pack_direction(gtk.PACK_DIRECTION_RTL)
 		help_menu = gtk.MenuItem("Help")
@@ -497,6 +498,7 @@ class GitView:
 		menu_bar.append(help_menu)
 		vbox.pack_start(menu_bar, False, False, 2)
 		menu_bar.show()
+		'''
 
 		scrollwin = gtk.ScrolledWindow()
 		scrollwin.set_policy(gtk.POLICY_NEVER, gtk.POLICY_AUTOMATIC)
@@ -548,6 +550,7 @@ class GitView:
 
 		return vbox
 
+	'''
 	def about_menu_response(self, widget, string):
 		dialog = gtk.AboutDialog()
 		dialog.set_name("Gitview")
@@ -558,6 +561,7 @@ class GitView:
 		dialog.set_wrap_license(True)
 		dialog.run()
 		dialog.destroy()
+	'''
 
 
 	def construct_bottom(self):
