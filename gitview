@@ -188,8 +188,9 @@ class CellRendererGraph(gtk.GenericCellRenderer):
 
 		box_size = self.box_size(widget)
 
-		ctx.set_line_width(box_size / 8)
+		ctx.set_line_width(box_size / 6)
 		ctx.set_line_cap(cairo.LINE_CAP_SQUARE)
+		ctx.set_line_join(cairo.LINE_JOIN_ROUND)
 
 		# Draw lines into the cell
 		for start, end, colour in self.in_lines:
@@ -518,7 +519,7 @@ class GitView:
 
 		cell = CellRendererGraph()
 		column = gtk.TreeViewColumn()
-		cell.set_property("width", 200)
+		cell.set_property("width", 235)
 		column.set_resizable(True)
 		column.pack_start(cell, expand=True)
 		column.add_attribute(cell, "node", 1)
