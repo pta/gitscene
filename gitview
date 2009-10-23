@@ -1019,11 +1019,11 @@ class GitView:
 		self.treeview.grab_focus()
 
 if __name__ == "__main__":
-	without_diff = 0
+	without_diff = 1
 
 	if (len(sys.argv) > 1 ):
-		if (sys.argv[1] == "--without-diff"):
-			without_diff = 1
+		if (sys.argv[1] == "--with-diff"):
+			without_diff = 0
 
 	view = GitView( without_diff != 1)
 	view.run(sys.argv[without_diff:])
