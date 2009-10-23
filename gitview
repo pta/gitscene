@@ -603,7 +603,7 @@ class GitView:
 		self.revid_label.show()
 		align.show()
 
-		col = col + 1
+		col += 1
 
 		align = gtk.Alignment(0.0, 0.5)
 		label = gtk.Label()
@@ -621,7 +621,7 @@ class GitView:
 		self.committer_label.show()
 		align.show()
 
-		col = col + 1
+		col += 1
 
 		align = gtk.Alignment(0.0, 0.5)
 		label = gtk.Label()
@@ -639,7 +639,7 @@ class GitView:
 		self.author_label.show()
 		align.show()
 
-		col = col + 1
+		col += 1
 
 		align = gtk.Alignment(0.0, 0.5)
 		label = gtk.Label()
@@ -657,7 +657,7 @@ class GitView:
 		self.timestamp_label.show()
 		align.show()
 
-		col = col + 1
+		col += 1
 
 		align = gtk.Alignment(0.0, 0.5)
 		label = gtk.Label()
@@ -668,7 +668,7 @@ class GitView:
 		align.show()
 		self.parents_widgets = []
 
-		col = col + 2
+		col += 2
 
 		align = gtk.Alignment(0.0, 0.5)
 		label = gtk.Label()
