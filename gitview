@@ -435,9 +435,10 @@ class GitView:
 		# Use three-quarters of the screen by default
 		screen = self.window.get_screen()
 		monitor = screen.get_monitor_geometry(0)
-		width = monitor.width
-		height = monitor.height
+		width = 800
+		height = 800
 		self.window.set_default_size(width, height)
+		self.window.set_position(gtk.WIN_POS_CENTER)
 
 		# FIXME AndyFitz!
 		icon = self.window.render_icon(gtk.STOCK_INDEX, gtk.ICON_SIZE_BUTTON)
@@ -471,17 +472,19 @@ class GitView:
 
 	def construct(self):
 		"""Construct the window contents."""
-		paned = gtk.VPaned()
-		paned.pack1(self.construct_top(), resize=False, shrink=True)
-		paned.pack2(self.construct_bottom(), resize=False, shrink=True)
+		paned = gtk.VBox()
+		paned.pack_start(self.construct_top(), expand=True, fill=True)
+		paned.pack_start(self.construct_bottom(), expand=False, fill=False)
 		self.window.add(paned)
 		paned.show()
 
 
 	def construct_top(self):
 		"""Construct the top-half of the window."""
-		vbox = gtk.VBox(spacing=6)
-		vbox.set_border_width(12)
+		vbox = gtk.VBox()
+		vbox.set_border_width(4)
+		(width, height) = self.window.get_size()
+		#vbox.set_size_request(width/2, 0)
 		vbox.show()
 
 		'''
@@ -515,6 +518,7 @@ class GitView:
 
 		cell = CellRendererGraph()
 		column = gtk.TreeViewColumn()
+		cell.set_property("width", 200)
 		column.set_resizable(True)
 		column.pack_start(cell, expand=True)
 		column.add_attribute(cell, "node", 1)
@@ -531,6 +535,7 @@ class GitView:
 		column.add_attribute(cell, "text", 4)
 		self.treeview.append_column(column)
 
+		'''
 		cell = gtk.CellRendererText()
 		cell.set_property("width-chars", 40)
 		cell.set_property("ellipsize", pango.ELLIPSIZE_END)
@@ -547,6 +552,7 @@ class GitView:
 		column.pack_start(cell, expand=True)
 		column.add_attribute(cell, "text", 6)
 		self.treeview.append_column(column)
+		'''
 
 		return vbox
 
@@ -566,23 +572,26 @@ class GitView:
 
 	def construct_bottom(self):
 		"""Construct the bottom half of the window."""
-		vbox = gtk.VBox(False, spacing=6)
-		vbox.set_border_width(12)
-		(width, height) = self.window.get_size()
-		vbox.set_size_request(width, int(height / 2.5))
+		vbox = gtk.Alignment(0.5, 0.5, 0, 0)
+		vbox.set_border_width(4)
+		#(width, height) = self.window.get_size()
+		#vbox.set_size_request(int(width*0.4), height)
 		vbox.show()
 
-		self.table = gtk.Table(rows=4, columns=4)
-		self.table.set_row_spacings(6)
+		self.table = gtk.Table(rows=6, columns=2)
+		self.table.set_row_spacings(8)
 		self.table.set_col_spacings(6)
-		vbox.pack_start(self.table, expand=False, fill=True)
+		vbox.add(self.table)
+		#vbox = self.table
 		self.table.show()
+
+		col = 0
 
 		align = gtk.Alignment(0.0, 0.5)
 		label = gtk.Label()
 		label.set_markup("<b>Revision:</b>")
 		align.add(label)
-		self.table.attach(align, 0, 1, 0, 1, gtk.FILL, gtk.FILL)
+		self.table.attach(align, 0, 1, col, col+1, gtk.FILL, gtk.FILL)
 		label.show()
 		align.show()
 
@@ -590,15 +599,17 @@ class GitView:
 		self.revid_label = gtk.Label()
 		self.revid_label.set_selectable(True)
 		align.add(self.revid_label)
-		self.table.attach(align, 1, 2, 0, 1, gtk.EXPAND | gtk.FILL, gtk.FILL)
+		self.table.attach(align, 1, 2, col, col+1, gtk.EXPAND | gtk.FILL, gtk.FILL)
 		self.revid_label.show()
 		align.show()
+
+		col = col + 1
 
 		align = gtk.Alignment(0.0, 0.5)
 		label = gtk.Label()
 		label.set_markup("<b>Committer:</b>")
 		align.add(label)
-		self.table.attach(align, 0, 1, 1, 2, gtk.FILL, gtk.FILL)
+		self.table.attach(align, 0, 1, col, col+1, gtk.FILL, gtk.FILL)
 		label.show()
 		align.show()
 
@@ -606,15 +617,35 @@ class GitView:
 		self.committer_label = gtk.Label()
 		self.committer_label.set_selectable(True)
 		align.add(self.committer_label)
-		self.table.attach(align, 1, 2, 1, 2, gtk.EXPAND | gtk.FILL, gtk.FILL)
+		self.table.attach(align, 1, 2, col, col+1, gtk.EXPAND | gtk.FILL, gtk.FILL)
 		self.committer_label.show()
 		align.show()
+
+		col = col + 1
+
+		align = gtk.Alignment(0.0, 0.5)
+		label = gtk.Label()
+		label.set_markup("<b>Author:</b>")
+		align.add(label)
+		self.table.attach(align, 0, 1, col, col+1, gtk.FILL, gtk.FILL)
+		label.show()
+		align.show()
+
+		align = gtk.Alignment(0.0, 0.5)
+		self.author_label = gtk.Label()
+		self.author_label.set_selectable(True)
+		align.add(self.author_label)
+		self.table.attach(align, 1, 2, col, col+1, gtk.EXPAND | gtk.FILL, gtk.FILL)
+		self.author_label.show()
+		align.show()
+
+		col = col + 1
 
 		align = gtk.Alignment(0.0, 0.5)
 		label = gtk.Label()
 		label.set_markup("<b>Timestamp:</b>")
 		align.add(label)
-		self.table.attach(align, 0, 1, 2, 3, gtk.FILL, gtk.FILL)
+		self.table.attach(align, 0, 1, col, col+1, gtk.FILL, gtk.FILL)
 		label.show()
 		align.show()
 
@@ -622,28 +653,33 @@ class GitView:
 		self.timestamp_label = gtk.Label()
 		self.timestamp_label.set_selectable(True)
 		align.add(self.timestamp_label)
-		self.table.attach(align, 1, 2, 2, 3, gtk.EXPAND | gtk.FILL, gtk.FILL)
+		self.table.attach(align, 1, 2, col, col+1, gtk.EXPAND | gtk.FILL, gtk.FILL)
 		self.timestamp_label.show()
 		align.show()
+
+		col = col + 1
 
 		align = gtk.Alignment(0.0, 0.5)
 		label = gtk.Label()
 		label.set_markup("<b>Parents:</b>")
 		align.add(label)
-		self.table.attach(align, 0, 1, 3, 4, gtk.FILL, gtk.FILL)
+		self.table.attach(align, 0, 1, col, col+1, gtk.FILL, gtk.FILL)
 		label.show()
 		align.show()
 		self.parents_widgets = []
+
+		col = col + 2
 
 		align = gtk.Alignment(0.0, 0.5)
 		label = gtk.Label()
 		label.set_markup("<b>Children:</b>")
 		align.add(label)
-		self.table.attach(align, 2, 3, 3, 4, gtk.FILL, gtk.FILL)
+		self.table.attach(align, 0, 1, col, col+1, gtk.FILL, gtk.FILL)
 		label.show()
 		align.show()
 		self.children_widgets = []
 
+		'''
 		scrollwin = gtk.ScrolledWindow()
 		scrollwin.set_policy(gtk.POLICY_AUTOMATIC, gtk.POLICY_AUTOMATIC)
 		scrollwin.set_shadow_type(gtk.SHADOW_IN)
@@ -665,6 +701,7 @@ class GitView:
 		sourceview.modify_font(pango.FontDescription("Monospace"))
 		scrollwin.add(sourceview)
 		sourceview.show()
+		'''
 
 		return vbox
 
@@ -674,20 +711,23 @@ class GitView:
 		commit = self.model[path][0]
 
 		if commit.committer is not None:
+			author = commit.author
 			committer = commit.committer
 			timestamp = commit.commit_date
 			message   =  commit.get_message(self.with_diff)
 			revid_label = commit.commit_sha1
 		else:
+			author = ""
 			committer = ""
 			timestamp = ""
 			message = ""
 			revid_label = ""
 
 		self.revid_label.set_text(revid_label)
+		self.author_label.set_text(author)
 		self.committer_label.set_text(committer)
 		self.timestamp_label.set_text(timestamp)
-		self.message_buffer.set_text(message)
+		#self.message_buffer.set_text(message)
 
 		for widget in self.parents_widgets:
 			self.table.remove(widget)
@@ -695,12 +735,13 @@ class GitView:
 		self.parents_widgets = []
 		self.table.resize(4 + len(commit.parent_sha1) - 1, 4)
 		for idx, parent_id in enumerate(commit.parent_sha1):
-			self.table.set_row_spacing(idx + 3, 0)
 
 			align = gtk.Alignment(0.0, 0.0)
 			self.parents_widgets.append(align)
-			self.table.attach(align, 1, 2, idx + 3, idx + 4,
+			self.table.attach(align, 1, 2, idx + 4, idx + 5,
 					gtk.EXPAND | gtk.FILL, gtk.FILL)
+			self.table.set_row_spacing(idx + 4, 0)
+			self.table.set_row_spacing(idx + 5, 0)
 			align.show()
 
 			hbox = gtk.HBox(False, 0)
@@ -751,12 +792,12 @@ class GitView:
 			self.table.resize(4 + len(child_sha1) - 1, 4)
 
 		for idx, child_id in enumerate(child_sha1):
-			self.table.set_row_spacing(idx + 3, 0)
 
 			align = gtk.Alignment(0.0, 0.0)
 			self.children_widgets.append(align)
-			self.table.attach(align, 3, 4, idx + 3, idx + 4,
+			self.table.attach(align, 1, 2, idx + 6, idx + 7,
 					gtk.EXPAND | gtk.FILL, gtk.FILL)
+			self.table.set_row_spacing(idx + 6, 0)
 			align.show()
 
 			hbox = gtk.HBox(False, 0)
