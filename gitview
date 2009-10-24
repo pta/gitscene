@@ -662,7 +662,7 @@ class GitView:
 			self.table.remove(widget)
 
 		self.parents_widgets = []
-		self.table.resize(4 + len(commit.parent_sha1) - 1, 4)
+		self.table.resize(4 + len(commit.parent_sha1), 2)
 		for idx, parent_id in enumerate(commit.parent_sha1):
 
 			align = gtk.Alignment(0.0, 0.0)
@@ -717,8 +717,7 @@ class GitView:
 			# We don't have child
 			child_sha1 = []
 
-		if ( len(child_sha1) > len(commit.parent_sha1)):
-			self.table.resize(4 + len(child_sha1) - 1, 4)
+		self.table.resize(4 + len(child_sha1) + len(commit.parent_sha1), 2)
 
 		for idx, child_id in enumerate(child_sha1):
 
