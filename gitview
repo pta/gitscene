@@ -323,13 +323,6 @@ class Commit:
 
 				continue
 
-	def get_message(self):
-		fp = os.popen("git cat-file commit " + self.commit_sha1)
-		message = fp.read()
-		fp.close()
-
-		return message
-
 class DiffWindow:
 	"""Diff window.
 	This object represents and manages a single window containing the
@@ -530,39 +523,7 @@ class GitView:
 		column.add_attribute(cell, "text", 4)
 		self.treeview.append_column(column)
 
-		'''
-		cell = gtk.CellRendererText()
-		cell.set_property("width-chars", 40)
-		cell.set_property("ellipsize", pango.ELLIPSIZE_END)
-		column = gtk.TreeViewColumn("Author")
-		column.set_resizable(True)
-		column.pack_start(cell, expand=True)
-		column.add_attribute(cell, "text", 5)
-		self.treeview.append_column(column)
-
-		cell = gtk.CellRendererText()
-		cell.set_property("ellipsize", pango.ELLIPSIZE_END)
-		column = gtk.TreeViewColumn("Date")
-		column.set_resizable(True)
-		column.pack_start(cell, expand=True)
-		column.add_attribute(cell, "text", 6)
-		self.treeview.append_column(column)
-		'''
-
 		return vbox
-
-	'''
-	def about_menu_response(self, widget, string):
-		dialog = gtk.AboutDialog()
-		dialog.set_name("Gitview")
-		dialog.set_version(GitView.version)
-		dialog.set_authors(["Aneesh Kumar K.V <aneesh.kumar@hp.com>"])
-		dialog.set_website("http://www.kernel.org/pub/software/scm/git/")
-		dialog.set_copyright("Use and distribute under the terms of the GNU General Public License")
-		dialog.set_wrap_license(True)
-		dialog.run()
-		dialog.destroy()
-	'''
 
 
 	def construct_bottom(self):
@@ -674,30 +635,6 @@ class GitView:
 		align.show()
 		self.children_widgets = []
 
-		'''
-		scrollwin = gtk.ScrolledWindow()
-		scrollwin.set_policy(gtk.POLICY_AUTOMATIC, gtk.POLICY_AUTOMATIC)
-		scrollwin.set_shadow_type(gtk.SHADOW_IN)
-		vbox.pack_start(scrollwin, expand=True, fill=True)
-		scrollwin.show()
-
-		if have_gtksourceview:
-			self.message_buffer = gtksourceview.SourceBuffer()
-			slm = gtksourceview.SourceLanguagesManager()
-			gsl = slm.get_language_from_mime_type("text/x-patch")
-			self.message_buffer.set_highlight(True)
-			self.message_buffer.set_language(gsl)
-			sourceview = gtksourceview.SourceView(self.message_buffer)
-		else:
-			self.message_buffer = gtk.TextBuffer()
-			sourceview = gtk.TextView(self.message_buffer)
-
-		sourceview.set_editable(False)
-		sourceview.modify_font(pango.FontDescription("Monospace"))
-		scrollwin.add(sourceview)
-		sourceview.show()
-		'''
-
 		return vbox
 
 	def _treeview_cursor_cb(self, *args):
@@ -709,20 +646,17 @@ class GitView:
 			author = commit.author
 			committer = commit.committer
 			timestamp = commit.commit_date
-			message   =  commit.get_message()
 			revid_label = commit.commit_sha1
 		else:
 			author = ""
 			committer = ""
 			timestamp = ""
-			message = ""
 			revid_label = ""
 
 		self.revid_label.set_text(compact_sha1(revid_label))
 		self.author_label.set_text(author)
 		self.committer_label.set_text(committer)
 		self.timestamp_label.set_text(timestamp)
-		#self.message_buffer.set_text(message)
 
 		for widget in self.parents_widgets:
 			self.table.remove(widget)
