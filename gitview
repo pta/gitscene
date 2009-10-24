@@ -764,6 +764,7 @@ class GitView:
 	def _key_press_cb(self, widget, event):
 		if (event.keyval == gtk.gdk.keyval_from_name('F5')):
 			Commit.children_sha1 = {}
+			self.get_bt_sha1()
 			self.set_branch(self.args)
 
 	def _destroy_cb(self, widget):
