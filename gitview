@@ -761,6 +761,11 @@ class GitView:
 			hbox.pack_start(button, expand=False, fill=True)
 			button.show()
 
+	def _key_press_cb(self, widget, event):
+		if (event.keyval == gtk.gdk.keyval_from_name('F5')):
+			Commit.children_sha1 = {}
+			self.set_branch(self.args)
+
 	def _destroy_cb(self, widget):
 		"""Callback for when a window we manage is destroyed."""
 		self.quit()
@@ -771,7 +776,10 @@ class GitView:
 		gtk.main_quit()
 
 	def run(self, args):
+		self.args = args
+
 		self.set_branch(args)
+		self.window.connect("key-press-event", self._key_press_cb)
 		self.window.connect("destroy", self._destroy_cb)
 		self.window.show()
 		gtk.main()
