@@ -56,6 +56,14 @@ def show_date(epoch, tz):
 
 	return time.strftime("%Y-%m-%d %H:%M:%S", time.gmtime(secs))
 
+full_sha1 = False
+
+def compact_sha1(sha1):
+	if (full_sha1):
+		return sha1
+	else:
+		return sha1[:7]
+
 
 class CellRendererGraph(gtk.GenericCellRenderer):
 	"""Cell renderer for directed graph.
@@ -286,10 +294,6 @@ class Commit:
 				Commit.children_sha1[parent_id].append(self.commit_sha1)
 			except KeyError:
 				Commit.children_sha1[parent_id] = [self.commit_sha1]
-
-		# IF we don't have parent
-		if (len(self.parent_sha1) == 0):
-			self.parent_sha1 = [0]
 
 		for line in commit_lines[1:]:
 			m = re.match("^ ", line)
@@ -724,7 +728,7 @@ class GitView:
 			message = ""
 			revid_label = ""
 
-		self.revid_label.set_text(revid_label)
+		self.revid_label.set_text(compact_sha1(revid_label))
 		self.author_label.set_text(author)
 		self.committer_label.set_text(committer)
 		self.timestamp_label.set_text(timestamp)
@@ -749,7 +753,7 @@ class GitView:
 			align.add(hbox)
 			hbox.show()
 
-			label = gtk.Label(parent_id)
+			label = gtk.Label(compact_sha1(parent_id))
 			label.set_selectable(True)
 			hbox.pack_start(label, expand=False, fill=True)
 			label.show()
@@ -787,7 +791,7 @@ class GitView:
 			child_sha1 = Commit.children_sha1[commit.commit_sha1]
 		except KeyError:
 			# We don't have child
-			child_sha1 = [ 0 ]
+			child_sha1 = []
 
 		if ( len(child_sha1) > len(commit.parent_sha1)):
 			self.table.resize(4 + len(child_sha1) - 1, 4)
@@ -805,7 +809,7 @@ class GitView:
 			align.add(hbox)
 			hbox.show()
 
-			label = gtk.Label(child_id)
+			label = gtk.Label(compact_sha1(child_id))
 			label.set_selectable(True)
 			hbox.pack_start(label, expand=False, fill=True)
 			label.show()
@@ -934,12 +938,13 @@ class GitView:
 			node_pos =  self.nodepos[commit.commit_sha1]
 
 		#The first parent always continue on the same line
-		try:
-			# check we alreay have the value
-			tmp_node_pos = self.nodepos[commit.parent_sha1[0]]
-		except KeyError:
-			self.colours[commit.parent_sha1[0]] = colour
-			self.nodepos[commit.parent_sha1[0]] = node_pos
+		if (len(commit.parent_sha1) > 0):
+			try:
+				# check we alreay have the value
+				tmp_node_pos = self.nodepos[commit.parent_sha1[0]]
+			except KeyError:
+				self.colours[commit.parent_sha1[0]] = colour
+				self.nodepos[commit.parent_sha1[0]] = node_pos
 
 		for sha1 in self.incomplete_line.keys():
 			if (sha1 != commit.commit_sha1):
@@ -1031,11 +1036,15 @@ class GitView:
 if __name__ == "__main__":
 	without_diff = 1
 
-	if (len(sys.argv) > 1 ):
-		if (sys.argv[1] == "--with-diff"):
-			without_diff = 0
+	if "--with-diff" in sys.argv:
+		without_diff = 0
+		sys.argv.remove("--with-diff")
+
+	if "--full-sha1" in sys.argv:
+		full_sha1 = True
+		sys.argv.remove("--full-sha1")
 
 	view = GitView( without_diff != 1)
-	view.run(sys.argv[without_diff:])
+	view.run(sys.argv)
 
 
