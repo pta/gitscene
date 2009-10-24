@@ -323,21 +323,12 @@ class Commit:
 
 				continue
 
-	def get_message(self, with_diff=0):
-		if (with_diff == 1):
-			message = self.diff_tree()
-		else:
-			fp = os.popen("git cat-file commit " + self.commit_sha1)
-			message = fp.read()
-			fp.close()
+	def get_message(self):
+		fp = os.popen("git cat-file commit " + self.commit_sha1)
+		message = fp.read()
+		fp.close()
 
 		return message
-
-	def diff_tree(self):
-		fp = os.popen("git diff-tree --pretty --cc  -v -p --always " +  self.commit_sha1)
-		diff = fp.read()
-		fp.close()
-		return diff
 
 class DiffWindow:
 	"""Diff window.
@@ -428,8 +419,7 @@ class GitView:
 	"""
 	version = "0.7"
 
-	def __init__(self, with_diff=0):
-		self.with_diff = with_diff
+	def __init__(self):
 		self.window =  	gtk.Window(gtk.WINDOW_TOPLEVEL)
 		self.window.set_border_width(0)
 		self.window.set_title("Git Repository Browser")
@@ -719,7 +709,7 @@ class GitView:
 			author = commit.author
 			committer = commit.committer
 			timestamp = commit.commit_date
-			message   =  commit.get_message(self.with_diff)
+			message   =  commit.get_message()
 			revid_label = commit.commit_sha1
 		else:
 			author = ""
@@ -1034,17 +1024,12 @@ class GitView:
 			window.set_diff(commit.commit_sha1, parent_id)
 
 if __name__ == "__main__":
-	without_diff = 1
-
-	if "--with-diff" in sys.argv:
-		without_diff = 0
-		sys.argv.remove("--with-diff")
 
 	if "--full-sha1" in sys.argv:
 		full_sha1 = True
 		sys.argv.remove("--full-sha1")
 
-	view = GitView( without_diff != 1)
+	view = GitView()
 	view.run(sys.argv)
 
 
