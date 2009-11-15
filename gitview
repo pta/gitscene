@@ -388,8 +388,8 @@ class DiffWindow:
 		if (commit_sha1 == 0 or parent_sha1 == 0 ):
 			return
 
-		fpst = os.popen("git diff-tree --stat " + parent_sha1 + " " + commit_sha1)
-		fp = os.popen("git diff-tree -p " + parent_sha1 + " " + commit_sha1)
+		fpst = os.popen("git diff-tree --ignore-space-at-eol --stat " + parent_sha1 + " " + commit_sha1)
+		fp = os.popen("git diff-tree --ignore-space-at-eol -p " + parent_sha1 + " " + commit_sha1)
 		self.buffer.set_text("********************************************************************************\n"
 				+ fpst.read()
 				+ "********************************************************************************\n"
