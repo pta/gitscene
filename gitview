@@ -474,22 +474,6 @@ class GitView:
 		#vbox.set_size_request(width/2, 0)
 		vbox.show()
 
-		'''
-		menu_bar = gtk.MenuBar()
-		menu_bar.set_pack_direction(gtk.PACK_DIRECTION_RTL)
-		help_menu = gtk.MenuItem("Help")
-		menu = gtk.Menu()
-		about_menu = gtk.MenuItem("About")
-		menu.append(about_menu)
-		about_menu.connect("activate", self.about_menu_response, "about")
-		about_menu.show()
-		help_menu.set_submenu(menu)
-		help_menu.show()
-		menu_bar.append(help_menu)
-		vbox.pack_start(menu_bar, False, False, 2)
-		menu_bar.show()
-		'''
-
 		scrollwin = gtk.ScrolledWindow()
 		scrollwin.set_policy(gtk.POLICY_AUTOMATIC, gtk.POLICY_AUTOMATIC)
 		scrollwin.set_shadow_type(gtk.SHADOW_IN)
