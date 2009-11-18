@@ -450,6 +450,9 @@ class DiffWindow:
 		if (commit_sha1 == 0 or parent_sha1 == 0 ):
 			return
 
+		if commit_msg == None:
+			commit_msg = compact_sha1 (parent_sha1) + '..' + compact_sha1 (commit_sha1)
+
 		fpst = os.popen("git diff-tree --ignore-space-at-eol --stat " + parent_sha1 + " " + commit_sha1)
 		fp = os.popen("git diff-tree --ignore-space-at-eol -p " + parent_sha1 + " " + commit_sha1)
 		self.buffer.set_text("********************************************************************************\n"
@@ -479,6 +482,13 @@ class GitView:
 	""" This is the main class
 	"""
 	version = "0.7"
+
+	TARGETS = [
+		('GITVIEW_TREE_MODEL_ROW', gtk.TARGET_SAME_WIDGET, 0),
+		('text/plain', 0, 1),
+		('TEXT', 0, 2),
+		('STRING', 0, 3),
+		]
 
 	def __init__(self):
 		self.window =  	gtk.Window(gtk.WINDOW_TOPLEVEL)
@@ -531,6 +541,7 @@ class GitView:
 		paned.pack_start(self.construct_top(), expand=True, fill=True)
 		paned.pack_start(self.construct_bottom(), expand=False, fill=False)
 		self.window.add(paned)
+		self.construct_dnd()
 		paned.show()
 
 
@@ -826,6 +837,35 @@ class GitView:
 		"""Callback for when a window we manage is destroyed."""
 		self.quit()
 
+	def construct_dnd (self):
+        # Allow enable drag and drop of rows including row move
+		self.treeview.enable_model_drag_source (gtk.gdk.BUTTON1_MASK,
+				self.TARGETS, gtk.gdk.ACTION_LINK)
+		self.treeview.enable_model_drag_dest (self.TARGETS,
+				gtk.gdk.ACTION_LINK)
+
+		self.treeview.connect ("drag_data_get", self.drag_data_get_data)
+		self.treeview.connect ("drag_data_received",
+				self.drag_data_received_data)
+
+	def drag_data_get_data(self, treeview, context, selection, target_id,
+			etime):
+		treeselection = treeview.get_selection()
+		model, iter = treeselection.get_selected()
+		data = model.get_value (iter, 0)
+		selection.set(selection.target, 8, data.commit_sha1)
+
+	def drag_data_received_data(self, treeview, context, x, y, selection,
+			info, etime):
+		model = treeview.get_model()
+		path, position = treeview.get_dest_row_at_pos(x, y)
+
+		iter = model.get_iter (path)
+		target_commit = model.get_value (iter, 0)
+
+		if selection.data != target_commit.commit_sha1:
+			window = DiffWindow()
+			window.set_diff (None, selection.data, target_commit.commit_sha1)
 
 	def quit(self):
 		"""Stop the GTK+ main loop."""
