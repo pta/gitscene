@@ -335,8 +335,8 @@ class DiffWindow:
 		self.window.set_title("Git Diff Window")
 
 		# Use two thirds of the screen by default
-		width = 800
-		height = 600
+		width = 880
+		height = 660
 		self.window.set_default_size(width, height)
 
 		self.construct()
@@ -372,7 +372,7 @@ class DiffWindow:
 			sourceview = gtk.TextView(self.buffer)
 
 		sourceview.set_editable(False)
-		sourceview.modify_font(pango.FontDescription("Riddle 14"))
+		sourceview.modify_font(pango.FontDescription("Monospace 16"))
 		sourceview.set_tab_width(4)
 		sourceview.set_show_line_numbers(True);
 		scrollwin.add(sourceview)
