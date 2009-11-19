@@ -392,7 +392,9 @@ class DiffWindow:
 	differences between two revisions on a branch.
 	"""
 
-	def __init__(self):
+	def __init__(self, parent):
+		self.parent = parent
+
 		self.window = gtk.Window(gtk.WINDOW_TOPLEVEL)
 		self.window.set_border_width(0)
 
@@ -453,8 +455,8 @@ class DiffWindow:
 		if commit_msg == None:
 			commit_msg = compact_sha1 (parent_sha1) + '..' + compact_sha1 (commit_sha1)
 
-		fpst = os.popen("git diff-tree --ignore-space-at-eol --stat " + parent_sha1 + " " + commit_sha1)
-		fp = os.popen("git diff-tree --ignore-space-at-eol -p " + parent_sha1 + " " + commit_sha1)
+		fpst = os.popen("git diff-tree --ignore-space-at-eol --stat " + parent_sha1 + ".." + commit_sha1 + " -- " + self.parent.branch)
+		fp = os.popen("git diff-tree --ignore-space-at-eol -p " + parent_sha1 + ".." + commit_sha1 + " -- " + self.parent.branch)
 		self.buffer.set_text("********************************************************************************\n"
 				+ fpst.read()
 				+ "********************************************************************************\n"
@@ -864,7 +866,7 @@ class GitView:
 		target_commit = model.get_value (iter, 0)
 
 		if selection.data != target_commit.commit_sha1:
-			window = DiffWindow()
+			window = DiffWindow(self)
 			window.set_diff (None, selection.data, target_commit.commit_sha1)
 
 	def quit(self):
@@ -882,7 +884,8 @@ class GitView:
 
 	def set_branch(self, args):
 		"""Fill in different windows with info from the reposiroty"""
-		fp = os.popen("git rev-parse --sq --default HEAD " + list_to_string(args, 1))
+		self.branch = list_to_string(args, 1);
+		fp = os.popen("git rev-parse --sq --default HEAD " + self.branch)
 		git_rev_list_cmd = fp.read()
 		fp.close()
 		fp = os.popen("git rev-list  --header --topo-order --parents " + git_rev_list_cmd)
@@ -1047,7 +1050,7 @@ class GitView:
 
 	def _show_clicked_cb(self, widget, commit_msg, commit_sha1, parent_sha1):
 		"""Callback for when the show button for a parent is clicked."""
-		window = DiffWindow()
+		window = DiffWindow(self)
 		window.set_diff(commit_msg, commit_sha1, parent_sha1)
 		self.treeview.grab_focus()
 
@@ -1057,7 +1060,7 @@ class GitView:
 		commit = self.model[path][0]
 
 		for parent_id in commit.parent_sha1:
-			window = DiffWindow()
+			window = DiffWindow(self)
 			window.set_diff(commit.message, commit.commit_sha1, parent_id)
 
 if __name__ == "__main__":
