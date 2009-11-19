@@ -455,8 +455,12 @@ class DiffWindow:
 		if commit_msg == None:
 			commit_msg = compact_sha1 (parent_sha1) + '..' + compact_sha1 (commit_sha1)
 
-		fpst = os.popen("git diff-tree --ignore-space-at-eol --stat " + parent_sha1 + ".." + commit_sha1 + " -- " + self.parent.branch)
-		fp = os.popen("git diff-tree --ignore-space-at-eol -p " + parent_sha1 + ".." + commit_sha1 + " -- " + self.parent.branch)
+		fpst = os.popen("git diff-tree --ignore-space-at-eol --stat "
+				+ parent_sha1 + ".." + commit_sha1
+				+ " -- " + self.parent.path)
+		fp = os.popen("git diff-tree --ignore-space-at-eol -p "
+				+ parent_sha1 + ".." + commit_sha1
+				+ " -- " + self.parent.path)
 		self.buffer.set_text("********************************************************************************\n"
 				+ fpst.read()
 				+ "********************************************************************************\n"
@@ -833,7 +837,7 @@ class GitView:
 		if (event.keyval == gtk.gdk.keyval_from_name('F5')):
 			Commit.children_sha1 = {}
 			self.get_bt_sha1()
-			self.set_branch(self.args)
+			self.update_branch()
 
 	def _destroy_cb(self, widget):
 		"""Callback for when a window we manage is destroyed."""
@@ -873,19 +877,20 @@ class GitView:
 		"""Stop the GTK+ main loop."""
 		gtk.main_quit()
 
-	def run(self, args):
-		self.args = args
+	def run(self, branch, path):
+		self.branch = " ".join (branch);
+		self.path = " ".join (path);
 
-		self.set_branch(args)
+		self.update_branch()
 		self.window.connect("key-press-event", self._key_press_cb)
 		self.window.connect("destroy", self._destroy_cb)
 		self.window.show()
 		gtk.main()
 
-	def set_branch(self, args):
+	def update_branch(self):
 		"""Fill in different windows with info from the reposiroty"""
-		self.branch = list_to_string(args, 1);
-		fp = os.popen("git rev-parse --sq --default HEAD " + self.branch)
+		fp = os.popen("git rev-parse --sq --default HEAD "
+				+ self.branch + " -- " + self.path)
 		git_rev_list_cmd = fp.read()
 		fp.close()
 		fp = os.popen("git rev-list  --header --topo-order --parents " + git_rev_list_cmd)
@@ -1065,11 +1070,18 @@ class GitView:
 
 if __name__ == "__main__":
 
-	if "--full-sha1" in sys.argv:
-		full_sha1 = True
-		sys.argv.remove("--full-sha1")
+	branch = []
+	path = []
+
+	for arg in sys.argv[1:]:
+		if arg == "--full-sha1":
+			full_sha1 = True
+		elif os.path.isfile (arg):
+			path.append (arg)
+		else:
+			branch.append (arg)
 
 	view = GitView()
-	view.run(sys.argv)
+	view.run (branch, path)
 
 
