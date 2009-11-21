@@ -1,4 +1,5 @@
 #! /usr/bin/env python
+# -*- coding: UTF-8 -*-
 
 # This program is free software; you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -7,10 +8,11 @@
 
 """ gitview
 GUI browser for git repository
-This program is based on bzrk by Scott James Remnant <scott@ubuntu.com>
+This program is based on gitview by Aneesh Kumar K.V <aneesh.kumar@hp.com>
+gitview is based on bzrk by Scott James Remnant <scott@ubuntu.com>
 """
-__copyright__ = "Copyright (C) 2006 Hewlett-Packard Development Company, L.P."
-__author__	= "Aneesh Kumar K.V <aneesh.kumar@hp.com>"
+__copyright__ = "Copyleft (C) 2009 PHẠM Tuấn Anh"
+__author__	= "PHẠM Tuấn Anh <cs.PhamTuanAnh@gmail.com>"
 
 
 import sys
@@ -31,7 +33,7 @@ try:
 	have_gtksourceview = True
 except ImportError:
 	have_gtksourceview = False
-	print "Running without gtksourceview module"
+	print "Running without gtksourceview2 module"
 
 re_ident = re.compile('(author|committer) (?P<ident>.*) (?P<epoch>\d+) (?P<tz>[+-]\d{4})')
 
@@ -1083,5 +1085,3 @@ if __name__ == "__main__":
 
 	view = GitView()
 	view.run (branch, path)
-
-

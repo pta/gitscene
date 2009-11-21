@@ -1,0 +1,47 @@
+gitscene(1)
+==========
+
+NAME
+----
+gitscene - A GTK based repository browser for git
+
+SYNOPSIS
+--------
+'gitscene'  [options] [args]
+
+DESCRIPTION
+---------
+
+Dependencies
+
+* Python 2.4
+* PyGTK 2.8 or later
+* PyCairo 1.0 or later
+
+COMMANDS
+------
+	F5 to refresh gitscene, reload any change made in repository.
+
+	Double click row to open diff from each parent commits.
+
+	Drag row A to B to open diff between commits A..B.
+
+OPTIONS
+------
+	--full-sha1
+		Display full-length sha1 code
+
+	<args>
+		All the valid option for git-rev-list(1). Paths are also used for Diff Windows.
+
+EXAMPLES
+------
+	gitscene v2.6.12.. include/scsi drivers/scsi
+	  Show as the changes since version v2.6.12 that changed any file in the include/scsi
+	  or drivers/scsi subdirectories
+
+	gitscene origin..
+	  Show all changes since tag origin
+
+	gitscene --since=2.weeks.ago
+	  Show the changes during the last two weeks 
