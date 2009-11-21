@@ -457,10 +457,10 @@ class DiffWindow:
 		if commit_msg == None:
 			commit_msg = compact_sha1 (parent_sha1) + '..' + compact_sha1 (commit_sha1)
 
-		fpst = os.popen("git diff-tree --ignore-space-at-eol --stat "
+		fpst = os.popen("git diff-tree --ignore-space-at-eol --stat -M "
 				+ parent_sha1 + ".." + commit_sha1
 				+ " -- " + self.parent.path)
-		fp = os.popen("git diff-tree --ignore-space-at-eol -p "
+		fp = os.popen("git diff-tree --ignore-space-at-eol -p -M "
 				+ parent_sha1 + ".." + commit_sha1
 				+ " -- " + self.parent.path)
 		self.buffer.set_text("********************************************************************************\n"
